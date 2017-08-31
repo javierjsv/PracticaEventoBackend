@@ -6,7 +6,7 @@
 package co.edu.sena.adsi.eventos.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,7 +49,7 @@ public class Roles implements Serializable {
         @JoinColumn(name = "id_roles", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "id_users", referencedColumnName = "id")})
     @ManyToMany
-    private Collection<Users> usersCollection;
+    private List<Usuarios> usuariosList;
 
     public Roles() {
     }
@@ -75,12 +75,12 @@ public class Roles implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Users> getUsersCollection() {
-        return usersCollection;
+    public List<Usuarios> getUsuariosList() {
+        return usuariosList;
     }
 
-    public void setUsersCollection(Collection<Users> usersCollection) {
-        this.usersCollection = usersCollection;
+    public void setUsuariosList(List<Usuarios> usuariosList) {
+        this.usuariosList = usuariosList;
     }
 
     @Override

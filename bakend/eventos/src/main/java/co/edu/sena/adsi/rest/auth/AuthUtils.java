@@ -1,6 +1,6 @@
 package co.edu.sena.adsi.rest.auth;
 
-import co.consulta.de.procesos.jpa.entities.Usuario;
+import co.edu.sena.adsi.eventos.entities.Usuarios;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -10,6 +10,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+
 import java.text.ParseException; 
 import java.util.Arrays;
 import org.joda.time.DateTime;
@@ -17,7 +18,7 @@ import org.joda.time.DateTime;
 public final class AuthUtils {
 
     private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
-    private static final String TOKEN_SECRET = "ConsultaProcesos!TusProcesosEnLinea**";
+    private static final String TOKEN_SECRET = "adsilomejor**";
     public static final String AUTH_HEADER_KEY = "Authorization";
 
     public static String getSubject(String authHeader) throws ParseException, JOSEException {
@@ -33,14 +34,14 @@ public final class AuthUtils {
         }
     }
 
-    public static Token createToken(String host, Usuario user) throws JOSEException {
+    public static Token createToken(String host, Usuarios user) throws JOSEException {
         JWTClaimsSet claim = new JWTClaimsSet();
         claim.setSubject(Integer.toString(user.getId()));
         claim.setIssuer(host);
         claim.setIssueTime(DateTime.now().toDate());
         claim.setExpirationTime(DateTime.now().plusDays(1).toDate());
-        claim.setCustomClaim("user", user.getNombres()+ " " + user.getApellidos());
-        claim.setCustomClaim("roles", Arrays.toString(user.getRolList().toArray()));
+        claim.setCustomClaim("user", user.getName()+ " " + user.getLastname());
+        claim.setCustomClaim("roles", Arrays.toString(user.getRolesList().toArray()));
         JWSSigner signer = new MACSigner(TOKEN_SECRET);
         SignedJWT jwt = new SignedJWT(JWT_HEADER, claim);
         jwt.sign(signer);

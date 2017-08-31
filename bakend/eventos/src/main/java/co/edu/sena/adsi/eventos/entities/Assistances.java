@@ -49,7 +49,7 @@ public class Assistances implements Serializable {
     private Date date;
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users idUser;
+    private Usuarios idUser;
 
     public Assistances() {
     }
@@ -82,11 +82,11 @@ public class Assistances implements Serializable {
         this.date = date;
     }
 
-    public Users getIdUser() {
+    public Usuarios getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Users idUser) {
+    public void setIdUser(Usuarios idUser) {
         this.idUser = idUser;
     }
 

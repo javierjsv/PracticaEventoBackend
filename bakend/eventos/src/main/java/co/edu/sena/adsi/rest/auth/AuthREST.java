@@ -1,11 +1,10 @@
 package co.edu.sena.adsi.rest.auth;
 
-
-import co.edu.sena.adsi.eventos.entities.Users;
-import co.edu.sena.adsi.eventos.jpa.sessions.UsersFacade;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nimbusds.jose.JOSEException;
+import co.edu.sena.adsi.eventos.entities.Usuarios;
+import co.edu.sena.adsi.eventos.jpa.sessions.UsuariosFacade;
 import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -25,30 +24,25 @@ public class AuthREST {
             CLIENT_SECRET = "client_secret", CODE_KEY = "code", GRANT_TYPE_KEY = "grant_type",
             AUTH_CODE = "authorization_code";
 
-    public static final String NOT_FOUND_MSG = "El Usuario no existe", LOGING_ERROR_MSG = "Usuario y/o password, no coinciden",LOGING_ERROR_LOGIN = "Usuario bloqueado contacta con el administrador";
+    public static final String NOT_FOUND_MSG = "El Usuario no existe", LOGING_ERROR_MSG = "Usuario y/o password, no coinciden";
 
     @EJB
-    private UsersFacade usersEJB;
+    private UsuariosFacade usuarioEJB;
 
     @POST
     @PermitAll
     @Path("login")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response login(Users user, @Context final HttpServletRequest request) throws JOSEException {
-        final Users foundUser;
+    public Response login(Usuarios usuarios, @Context final HttpServletRequest request) throws JOSEException {
+        final Usuarios foundUser;
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        foundUser = usersEJB.findByNumDocument(user.getNumDocument());
-        user.setContrasenas(DigestUtil.cifrarPassword(user.getPassword()));
+        foundUser = usuarioEJB.findByCorreos(usuarios.getCorreos());
+        usuarios.setContrasenas(DigestUtil.cifrarPassword(usuarios.getContrasenas()));
         if (foundUser == null) {
             return Response.status(Status.UNAUTHORIZED).entity(gson.toJson(NOT_FOUND_MSG)).build();
-        } else if (user.getContrasenas().equals(foundUser.getContrasenas())) {
-            
-            if (!foundUser.getActivo()) {
-                        return Response.status(Status.UNAUTHORIZED).entity(gson.toJson(LOGING_ERROR_LOGIN)).build();
-
-            }
+        } else if (usuarios.getContrasenas().equals(foundUser.getContrasenas())) {
             System.out.println("ok");
             final Token token = AuthUtils.createToken(request.getRemoteHost(), foundUser);
             System.out.println(gson.toJson(token));

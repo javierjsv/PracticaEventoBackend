@@ -48,7 +48,7 @@ public class DigitalDivice implements Serializable {
     private String ref;
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users idUser;
+    private Usuarios idUser;
 
     public DigitalDivice() {
     }
@@ -81,11 +81,11 @@ public class DigitalDivice implements Serializable {
         this.ref = ref;
     }
 
-    public Users getIdUser() {
+    public Usuarios getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Users idUser) {
+    public void setIdUser(Usuarios idUser) {
         this.idUser = idUser;
     }
 

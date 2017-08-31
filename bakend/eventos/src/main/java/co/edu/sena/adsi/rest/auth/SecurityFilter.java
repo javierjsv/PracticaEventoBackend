@@ -1,10 +1,13 @@
 package co.edu.sena.adsi.rest.auth;
 
-import co.consulta.de.procesos.jpa.entities.Rol;
-import co.consulta.de.procesos.jpa.entities.Usuario;
-import co.consulta.de.procesos.jpa.sessions.UsuarioFacade;
+import co.edu.sena.adsi.eventos.entities.Roles;
+import co.edu.sena.adsi.eventos.entities.Usuarios;
+import co.edu.sena.adsi.eventos.jpa.sessions.UsuariosFacade;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
+//import co.sena.edu.entities.Roles;
+//import co.edu.sena.adsi.eventos.entities.Usuarios;
+//import co.edu.sena.adsi.sessions.UsuariosFacade;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
@@ -31,7 +34,7 @@ import org.joda.time.DateTime;
 public class SecurityFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     @EJB
-    private UsuarioFacade usuarioEJB;
+    private UsuariosFacade usuariosEJB;
 
     private static final String EXPIRE_ERROR_MSG = "Token has expired",
             JWT_ERROR_MSG = "Unable to parse JWT",
@@ -48,7 +51,7 @@ public class SecurityFilter implements ContainerRequestFilter, ContainerResponse
 
         if (authHeader == null || authHeader.isEmpty()
                 || !authHeader.startsWith("Bearer ") || authHeader.split(" ").length != 2) {
-            Authorizer authorizer = new Authorizer(new ArrayList<Rol>(), "",
+            Authorizer authorizer = new Authorizer(new ArrayList<Roles>(), "",
                     originalContext.isSecure());
             requestContext.setSecurityContext(authorizer);
         } else {
@@ -65,8 +68,8 @@ public class SecurityFilter implements ContainerRequestFilter, ContainerResponse
             if (new DateTime(claimSet.getExpirationTime()).isBefore(DateTime.now())) {
                 throw new IOException(EXPIRE_ERROR_MSG);
             } else {
-                Usuario user = usuarioEJB.find(Integer.parseInt(claimSet.getSubject()));
-                Authorizer authorizer = new Authorizer(user.getRolList(), user.getNumeroDocumento(),
+                Usuarios user = usuariosEJB.find(Integer.parseInt(claimSet.getSubject()));
+                Authorizer authorizer = new Authorizer(user.getRolesList(), user.getNumeroDocumento(),
                         originalContext.isSecure());
                 requestContext.setSecurityContext(authorizer);
             }
@@ -83,11 +86,11 @@ public class SecurityFilter implements ContainerRequestFilter, ContainerResponse
 
     public static class Authorizer implements SecurityContext {
 
-        List<Rol> roles;
+        List<Roles> roles;
         String username;
         boolean isSecure;
 
-        public Authorizer(List<Rol> roles, String username, boolean isSecure) {
+        public Authorizer(List<Roles> roles, String username, boolean isSecure) {
             this.roles = roles;
             this.username = username;
             this.isSecure = isSecure;
@@ -100,12 +103,7 @@ public class SecurityFilter implements ContainerRequestFilter, ContainerResponse
 
         @Override
         public boolean isUserInRole(String role) {
-            for (Rol role1 : roles) {
-                if(role1.equals(role1)){
-                    return true;
-                }
-            }
-             return false;
+            return roles.contains(new Roles(role));
         }
 
         @Override

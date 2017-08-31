@@ -13,8 +13,8 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 public class ApplicationConfig extends ResourceConfig{
 
  public ApplicationConfig() {
-//       packages("co.edu.sena.adsi.eventos.rest.services;co.edu.sena.adsi.eventos.rest.auth");
-//       register(RolesAllowedDynamicFeature.class); //es la que have que se implemente la seguridad
+       packages("co.edu.sena.adsi.eventos.rest.services;co.edu.sena.adsi.eventos.rest.auth");
+       register(RolesAllowedDynamicFeature.class); //es la que have que se implemente la seguridad
     }
     
     
